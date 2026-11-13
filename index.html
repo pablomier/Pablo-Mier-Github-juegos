@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Camino al C1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<style>
+/* Layout: one narrow study column, like a page of notes, with the five exercises on a bar at the thumb. */
+:root {
+  --paper: #F1F4FA;
+  --surface: #FFFFFF;
+  --ink: #16203A;
+  --muted: #58637E;
+  --line: #D5DBE9;
+  --accent: #2743C8;
+  --on-accent: #FFFFFF;
+  --tint: #E4E9FB;
+  --mark: #FFE45C;
+  --on-mark: #16203A;
+  --good: #17794E;
+  --good-bg: #DDF3E8;
+  --bad: #B93127;
+  --bad-bg: #FBE3E0;
+  --display: "Bricolage Grotesque", "Trebuchet MS", "Segoe UI", sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0E1323; --surface: #182036; --ink: #E9ECF6; --muted: #9BA6C2; --line: #2B3554;
+    --accent: #93A5FF; --on-accent: #0E1323; --tint: #222C4D; --mark: #FFE45C; --on-mark: #16203A;
+    --good: #5FD09B; --good-bg: #143326; --bad: #FF8E84; --bad-bg: #3D1B18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0E1323; --surface: #182036; --ink: #E9ECF6; --muted: #9BA6C2; --line: #2B3554;
+  --accent: #93A5FF; --on-accent: #0E1323; --tint: #222C4D; --mark: #FFE45C; --on-mark: #16203A;
+  --good: #5FD09B; --good-bg: #143326; --bad: #FF8E84; --bad-bg: #3D1B18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; }
+.app {
+  max-width: 640px; margin: 0 auto; padding-block: 20px 110px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 20px;
+}
+.top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -0.01em; }
+.streak { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+main { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+h1 { font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: -0.02em; }
+h2 { font-family: var(--display); font-weight: 600; font-size: 19px; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+.lead { color: var(--muted); max-width: 60ch; }
+.label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.stack { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.spread { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+
+/* CEFR track */
+.track { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.seg { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.bar { height: 12px; border-radius: 6px; background: var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--accent); border-radius: 6px; }
+.seg-t { display: flex; justify-content: space-between; font-size: 14px; font-variant-numeric: tabular-nums; }
+.seg-t b { font-family: var(--display); }
+.seg-t span { color: var(--muted); }
+
+/* Today's plan */
+.tasks { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.task { display: grid; grid-template-columns: 24px 1fr auto; gap: 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
+.task-t { font-weight: 700; }
+.task-d { display: block; color: var(--muted); font-size: 14px; font-weight: 400; }
+.task-go { color: var(--accent); font-weight: 700; font-size: 14px; }
+.check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); }
+.check.done { border-color: var(--good); background: var(--good); position: relative; }
+.check.done::after { content: ""; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; border: solid var(--surface); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+
+/* Flashcard and panels */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.word { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1.1; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.ex { font-size: 18px; }
+mark { background: var(--mark); color: var(--on-mark); padding: 0 3px; border-radius: 3px; }
+.meaning { font-size: 20px; font-weight: 700; color: var(--accent); border-top: 1px dashed var(--line); padding-top: 14px; }
+.note { color: var(--muted); font-size: 15px; }
+.chip { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 999px; background: var(--tint); color: var(--accent); }
+.meta { display: flex; gap: 10px; align-items: center; font-size: 14px; color: var(--muted); flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+
+button, .btn { font: inherit; cursor: pointer; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 18px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent); font-weight: 700; text-decoration: none; text-align: center; }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn.quiet { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.good { background: var(--good-bg); color: var(--good); border-color: var(--good); }
+.btn.bad { background: var(--bad-bg); color: var(--bad); border-color: var(--bad); }
+.btn.small { min-height: 36px; padding: 4px 12px; font-size: 14px; }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.grid3 .btn { padding-inline: 6px; font-size: 15px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Grammar */
+.topics { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.topic { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; width: 100%; padding: 14px 0; background: none; border: 0; border-bottom: 1px solid var(--line); color: inherit; text-align: left; }
+.topic b { display: block; }
+.topic small { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.explain { background: var(--tint); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.explain i { font-style: normal; font-weight: 700; color: var(--accent); }
+.q { font-size: 20px; font-weight: 700; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt { min-height: 48px; padding: 10px 14px; text-align: left; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 17px; }
+.opt.right { background: var(--good-bg); border-color: var(--good); color: var(--good); font-weight: 700; }
+.opt.wrong { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+.why { border-left: 3px solid var(--line); padding-left: 12px; color: var(--muted); }
+
+/* Phrases and writing */
+input[type="text"], textarea { width: 100%; font: inherit; font-size: 17px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+textarea { min-height: 220px; resize: vertical; line-height: 1.6; }
+.seg-ctl { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg-ctl button { min-height: 40px; padding: 6px 14px; border: 0; background: transparent; color: var(--muted); font-weight: 700; }
+.seg-ctl button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.diff { font-size: 19px; line-height: 1.7; }
+.diff .ok { color: var(--good); }
+.diff .miss { color: var(--bad); text-decoration: underline wavy; text-underline-offset: 4px; font-weight: 700; }
+.prompt { font-size: 19px; font-weight: 700; }
+.count { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 14px; }
+.count.ok { color: var(--good); font-weight: 700; }
+
+/* Tab bar */
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--surface); border-top: 1px solid var(--line);
+  padding-top: 6px; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); }
+.tabs-in { max-width: 640px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
+.tabs a { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 10px; color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 700; }
+.tabs a[aria-current="page"] { background: var(--tint); color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) { .bar > i { transition: width 0.4s ease; } }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">Camino al C1</div>
+    <div class="streak" id="streak"></div>
+  </header>
+  <main id="main"></main>
+</div>
+<nav class="tabs" aria-label="Secciones">
+  <div class="tabs-in" id="tabs">
+    <a href="#hoy">Hoy</a>
+    <a href="#palabras">Palabras</a>
+    <a href="#gramatica">Gramática</a>
+    <a href="#frases">Frases</a>
+    <a href="#escribir">Escribir</a>
+  </div>
+</nav>
+
+<script>
+"use strict";
+/* ---------- Content ---------- */
+// [level, word, Spanish meaning, example with the word in [brackets], optional note]
+const VOCAB = [
+["B1","improve","mejorar","I want to [improve] my English before the course starts."],
+["B1","although","aunque","[Although] it was raining, we went for a walk."],
+["B1","borrow","pedir prestado","Can I [borrow] your notes from yesterday's class?","Tú pides: borrow. La otra persona presta: lend."],
+["B1","lend","prestar","She [lent] me her laptop for the weekend.","Pasado irregular: lend, lent, lent."],
+["B1","realise","darse cuenta","I didn't [realise] the shop closed at six.","Falso amigo: no significa «realizar»."],
+["B1","actually","en realidad","I thought the exam was hard, but [actually] it was fine.","Falso amigo: «actualmente» es currently."],
+["B1","currently","actualmente","I am [currently] living in Portugal."],
+["B1","attend","asistir a","You have to [attend] at least 80% of the lectures.","Falso amigo: «atender» es look after o deal with."],
+["B1","enough","suficiente","I don't have [enough] time to finish the essay."],
+["B1","avoid","evitar","Try to [avoid] translating word by word.","Después de avoid, el verbo va en -ing."],
+["B1","deadline","fecha límite","The [deadline] for the application is in June."],
+["B1","suggest","sugerir","My teacher [suggested] watching films in English.","Después de suggest, el verbo va en -ing."],
+["B1","available","disponible","Is this room [available] tomorrow morning?"],
+["B1","be used to","estar acostumbrado a","I'm [used to] getting up early.","Después va -ing. No lo confundas con used to + verbo (solía)."],
+["B1","look forward to","tener ganas de","I'm [looking forward to] starting university.","Después va -ing."],
+["B1","find out","averiguar, enterarse","I need to [find out] when the term begins."],
+["B1","give up","rendirse, dejar de","Don't [give up]; it gets easier with practice."],
+["B1","rent","alquiler, alquilar","The [rent] in Lisbon is quite expensive."],
+["B1","skill","habilidad, destreza","Listening is the [skill] I need to practise most."],
+["B1","however","sin embargo","The course is hard. [However], it is very useful."],
+["B1","advice","consejo","Can you give me some [advice] about studying abroad?","Incontable: some advice, a piece of advice. Nunca «advices»."],
+["B1","succeed","tener éxito, lograr","She [succeeded] in passing all her exams.","succeed in + -ing."],
+["B1","fail","suspender, fracasar","If you [fail] the test, you can take it again."],
+["B1","mark","nota (calificación)","I got a good [mark] in my last assignment."],
+["B1","lecture","clase magistral","The [lecture] starts at nine o'clock.","Falso amigo: «lectura» es reading."],
+["B1","library","biblioteca","I usually study in the [library].","Falso amigo: «librería» es bookshop."],
+["B1","embarrassed","avergonzado","I felt [embarrassed] when I forgot her name.","Falso amigo: «embarazada» es pregnant."],
+["B1","take notes","tomar apuntes","I always [take notes] during class."],
+["B1","grow up","crecer, criarse","I [grew up] in a small town."],
+["B1","unless","a menos que","You won't improve [unless] you practise every day."],
+
+["B2","achieve","lograr, conseguir","She [achieved] her goal of studying abroad."],
+["B2","assignment","trabajo (de clase)","We have to finish the [assignment] by Friday."],
+["B2","hand in","entregar","Please [hand in] your essays at the end of the class."],
+["B2","despite","a pesar de","[Despite] the noise, I managed to concentrate.","Despite + sustantivo o -ing. Nunca «despite of»."],
+["B2","whereas","mientras que","I prefer mornings, [whereas] my flatmate studies at night."],
+["B2","therefore","por lo tanto","The data were incomplete; [therefore], the results are not reliable."],
+["B2","reliable","fiable","Use [reliable] sources for your research."],
+["B2","research","investigación","She is doing [research] on climate change.","Incontable: do research. Nunca «a research»."],
+["B2","evidence","pruebas, indicios","There is strong [evidence] that sleep improves memory.","Incontable. Nunca «evidences»."],
+["B2","approach","enfoque","We need a different [approach] to solve this problem."],
+["B2","issue","problema, asunto","Housing is a serious [issue] for students."],
+["B2","increase","aumento, aumentar","There has been a sharp [increase] in prices."],
+["B2","decrease","disminuir","The number of applicants [decreased] last year."],
+["B2","require","requerir, exigir","This course [requires] a B2 level of English."],
+["B2","provide","proporcionar","The university [provides] free language support."],
+["B2","assume","suponer","I [assumed] the class was cancelled, but I was wrong.","Falso amigo: «asumir» una responsabilidad es take on."],
+["B2","eventually","al final, con el tiempo","[Eventually], I got used to the accent.","Falso amigo: «eventualmente» es possibly."],
+["B2","sensible","sensato","It was a [sensible] decision to start early.","Falso amigo: «sensible» en español es sensitive."],
+["B2","sensitive","sensible, delicado","This is a [sensitive] topic for many people."],
+["B2","carry out","llevar a cabo","The team [carried out] a survey of 500 students."],
+["B2","come up with","ocurrírsele (una idea)","She [came up with] a brilliant idea for the project."],
+["B2","deal with","ocuparse de, lidiar con","I have to [deal with] a lot of paperwork."],
+["B2","point out","señalar","The professor [pointed out] a mistake in my essay."],
+["B2","run out of","quedarse sin","We [ran out of] time before finishing the exam."],
+["B2","outcome","resultado","Nobody could predict the [outcome] of the experiment."],
+["B2","aim","objetivo, tener como objetivo","The [aim] of this essay is to compare two theories."],
+["B2","likely","probable","It is [likely] to rain this afternoon."],
+["B2","overall","en general","[Overall], the presentation went well."],
+["B2","struggle","tener dificultades","Many students [struggle] with academic writing."],
+["B2","keep up with","seguir el ritmo de","It's hard to [keep up with] all the reading."],
+
+["C1","nevertheless","no obstante","The task was difficult; [nevertheless], she completed it on time."],
+["C1","furthermore","además","The method is cheap. [Furthermore], it is easy to apply."],
+["C1","albeit","aunque (formal)","The results were positive, [albeit] limited."],
+["C1","thorough","minucioso, exhaustivo","She carried out a [thorough] analysis of the data."],
+["C1","account for","explicar; representar","Students [account for] a third of the city's population."],
+["C1","undermine","socavar, debilitar","Poor evidence [undermines] the whole argument."],
+["C1","highlight","destacar","The report [highlights] the need for more funding."],
+["C1","widespread","generalizado","There is [widespread] concern about rising rents."],
+["C1","subtle","sutil","There is a [subtle] difference between the two words.","La b no se pronuncia."],
+["C1","straightforward","sencillo, directo","The instructions were clear and [straightforward]."],
+["C1","compelling","convincente","He made a [compelling] case for changing the rules."],
+["C1","bias","sesgo","The study tried to avoid any [bias] in the sample."],
+["C1","shortcoming","defecto, carencia","One [shortcoming] of the study is its small sample."],
+["C1","assess","evaluar","The exam [assesses] your ability to write clearly."],
+["C1","to some extent","hasta cierto punto","[To some extent], I agree with the author."],
+["C1","rule out","descartar","We cannot [rule out] the possibility of an error."],
+["C1","bring about","provocar, dar lugar a","The internet has [brought about] huge changes in education."],
+["C1","come across","encontrarse con (por casualidad)","I [came across] an interesting article yesterday."],
+["C1","draw a conclusion","sacar una conclusión","It is too early to [draw any conclusions]."],
+["C1","take for granted","dar por sentado","We often [take] clean water [for granted]."],
+["C1","stem from","derivar de","Many of his problems [stem from] a lack of sleep."],
+["C1","likewise","del mismo modo","The first group improved. [Likewise], the second group made progress."],
+["C1","hence","de ahí, por lo tanto","The sample was small; [hence] the need for further research."],
+["C1","overlook","pasar por alto","It is easy to [overlook] small mistakes."],
+["C1","feasible","viable","The plan is ambitious but [feasible]."],
+["C1","acknowledge","reconocer","The author [acknowledges] the limits of her study."],
+["C1","conversely","por el contrario","Some students work best alone; [conversely], others need a group."],
+["C1","scope","alcance","This question is beyond the [scope] of the essay."],
+["C1","on the grounds that","con el argumento de que","The proposal was rejected [on the grounds that] it was too expensive."],
+["C1","be bound to","seguro que (va a pasar)","With so much practice, you are [bound to] improve."]
+];
+
+// In every question the first option is the correct one; options are shuffled on screen.
+const GRAMMAR = [
+{id:"pp", level:"B1", title:"Present perfect o past simple",
+ exp:["<i>Past simple</i>: acción terminada en un momento concreto (yesterday, in 2020, last week). «I moved to Portugal in 2024.»",
+      "<i>Present perfect</i>: experiencias sin decir cuándo, o algo que empezó en el pasado y sigue ahora (for, since, ever, never, already, yet). «I have lived in Portugal since 2024.»"],
+ qs:[
+  ["I ___ in Portugal since 2024.",["have lived","live","am living","lived"],"Con since hablamos de algo que empezó en el pasado y continúa: present perfect."],
+  ["We ___ to Porto last weekend.",["went","have gone","have been","go"],"Last weekend es un momento terminado: past simple."],
+  ["___ you ever ___ sushi?",["Have / eaten","Did / eat","Have / ate","Do / eat"],"Ever pregunta por una experiencia en la vida, sin fecha: have + participio."],
+  ["She ___ her homework yet.",["hasn't finished","didn't finish","doesn't finish","hasn't finish"],"Yet suele ir con present perfect, y el verbo va en participio (finished)."],
+  ["When ___ you ___ here?",["did / arrive","have / arrived","do / arrived","have / arrive"],"When pregunta por un momento concreto: past simple."]
+ ]},
+{id:"cond12", level:"B1", title:"Primer y segundo condicional",
+ exp:["<i>Primer condicional</i> (posible): if + present, will + verbo. «If it rains, we will stay at home.»",
+      "<i>Segundo condicional</i> (imaginario): if + past simple, would + verbo. «If I had more time, I would travel.»",
+      "Nunca pongas will ni would en la parte del if."],
+ qs:[
+  ["If it ___ tomorrow, we'll stay at home.",["rains","will rain","rained","would rain"],"Situación posible: if + present simple."],
+  ["If I ___ more money, I would travel more.",["had","have","would have","will have"],"Situación imaginaria: if + past simple, would + verbo."],
+  ["If I were you, I ___ to the teacher.",["would talk","will talk","talk","talked"],"If I were you es la fórmula para dar consejos: va con would."],
+  ["We'll miss the bus if we ___ now.",["don't leave","won't leave","didn't leave","wouldn't leave"],"Primer condicional: en la parte del if va el presente."],
+  ["What would you do if you ___ the lottery?",["won","win","would win","will win"],"Segundo condicional: if + past simple (won)."]
+ ]},
+{id:"reported", level:"B1", title:"Estilo indirecto",
+ exp:["Al contar lo que alguien dijo, el verbo retrocede un tiempo: am → was, saw → had seen, will → would, can → could.",
+      "<i>say</i> (that)… / <i>tell</i> + persona. «She said that she was busy.» «She told me that she was busy.» Nunca «said me»."],
+ qs:[
+  ["'I am tired.' → She said that she ___ tired.",["was","is","has been","be"],"Present pasa a past: am → was."],
+  ["She ___ me that she was busy.",["told","said","spoke","talked"],"Con la persona justo detrás (me) se usa tell."],
+  ["'I will call you.' → He said he ___ call me.",["would","will","can","did"],"Will pasa a would."],
+  ["'I can't come.' → She said she ___ come.",["couldn't","can't","won't","didn't"],"Can't pasa a couldn't."],
+  ["'I saw the film.' → He said he ___ the film.",["had seen","sees","has seen","would see"],"Past simple pasa a past perfect: saw → had seen."]
+ ]},
+{id:"passive", level:"B1", title:"Voz pasiva",
+ exp:["<i>be + participio</i>. Se usa cuando importa la acción más que quién la hace. «The essay was written by Ana.»",
+      "El tiempo lo marca el verbo be: is made, was made, has been made, will be made."],
+ qs:[
+  ["English ___ all over the world.",["is spoken","speaks","is speaking","spoke"],"El inglés no habla, es hablado: is + participio."],
+  ["The university ___ in 1911.",["was founded","founded","has founded","is found"],"Pasado terminado en pasiva: was + participio."],
+  ["The results ___ next week.",["will be announced","will announce","are announce","will announced"],"Futuro en pasiva: will be + participio."],
+  ["My bike ___ last night.",["was stolen","has stolen","stole","is stealing"],"Last night es pasado terminado: was + participio."],
+  ["The exam has already ___ .",["been marked","marked","be marked","being marked"],"Present perfect en pasiva: has been + participio."]
+ ]},
+{id:"cond3", level:"B2", title:"Tercer condicional",
+ exp:["Habla de un pasado que ya no se puede cambiar: <i>if + past perfect, would have + participio</i>.",
+      "«If I had studied, I would have passed.» (No estudié y no aprobé.)"],
+ qs:[
+  ["If I had known, I ___ you.",["would have called","would call","will have called","had called"],"Resultado imaginario en el pasado: would have + participio."],
+  ["If she ___ earlier, she wouldn't have missed the train.",["had left","left","would have left","has left"],"En la parte del if va el past perfect."],
+  ["We would have won if we ___ better.",["had played","played","would play","have played"],"If + past perfect (had played)."],
+  ["If you had told me, I ___ so surprised last night.",["wouldn't have been","wouldn't be","won't be","hadn't been"],"Last night es pasado, así que hace falta would have + participio."],
+  ["What would you have done if you ___ the exam?",["had failed","would fail","have failed","fail"],"Tercer condicional: if + past perfect."]
+ ]},
+{id:"deduction", level:"B2", title:"Modales de deducción",
+ exp:["<i>must</i>: estoy casi seguro de que sí. <i>can't</i>: estoy casi seguro de que no. <i>might / may / could</i>: es posible.",
+      "Para el pasado: must have, can't have, might have + participio. «It must have rained.»"],
+ qs:[
+  ["She's been studying all night. She ___ be exhausted.",["must","can't","mustn't","might not"],"Hay una razón clara para estar seguro de que sí: must."],
+  ["He ___ be at home; his car isn't there.",["can't","must","mustn't","has to"],"Estamos casi seguros de que no: can't. Mustn't es prohibición, no deducción."],
+  ["I'm not sure where Ana is. She ___ be in the library.",["might","must","can't","has to"],"No estamos seguros: might."],
+  ["The ground is wet. It ___ last night.",["must have rained","must rain","can't have rained","should rain"],"Deducción sobre el pasado: must have + participio."],
+  ["You ___ seen Tom yesterday; he was in Brazil.",["can't have","must have","mustn't have","might have"],"Es imposible que lo vieras: can't have + participio."]
+ ]},
+{id:"gerund", level:"B2", title:"Verbo en -ing o con to",
+ exp:["Con <i>-ing</i>: enjoy, avoid, finish, mind, suggest, keep. «I enjoy reading.»",
+      "Con <i>to + verbo</i>: want, decide, hope, manage, afford, promise. «I decided to stay.»",
+      "Después de una preposición (in, of, about, after…) siempre va -ing."],
+ qs:[
+  ["I enjoy ___ podcasts in English.",["listening to","to listen to","listen to","listened to"],"Después de enjoy va -ing."],
+  ["We decided ___ a flat together.",["to rent","renting","rent","rented"],"Después de decide va to + verbo."],
+  ["I'm interested in ___ abroad.",["studying","to study","study","studied"],"Después de una preposición (in) siempre va -ing."],
+  ["She suggested ___ a break.",["taking","to take","take","took"],"Después de suggest va -ing."],
+  ["I can't afford ___ a new laptop.",["to buy","buying","buy","bought"],"Después de afford va to + verbo."]
+ ]},
+{id:"relative", level:"B2", title:"Oraciones de relativo",
+ exp:["<i>who</i> para personas, <i>which</i> para cosas, <i>whose</i> para posesión, <i>where</i> para lugares. <i>That</i> vale para personas y cosas.",
+      "Entre comas (información extra) no se puede usar that. «Lisbon, which is very hilly, is beautiful.»"],
+ qs:[
+  ["The teacher ___ taught me English was from Ireland.",["who","which","whose","where"],"Para personas: who."],
+  ["Lisbon, ___ is the capital of Portugal, is very hilly.",["which","that","who","where"],"Es una cosa y va entre comas: which, nunca that."],
+  ["That's the student ___ essay won the prize.",["whose","who","which","that"],"El ensayo es del estudiante: whose indica posesión."],
+  ["This is the café ___ we first met.",["where","which","that","who"],"Hablamos del lugar en el que pasó algo: where."],
+  ["My brother, ___ lives in Madrid, is a nurse.",["who","that","which","whose"],"Persona y entre comas: who, nunca that."]
+ ]},
+{id:"inversion", level:"C1", title:"Inversión",
+ exp:["Si la frase empieza con una expresión negativa o restrictiva (Never, Rarely, Not only, Hardly, Under no circumstances), el auxiliar va antes del sujeto, como en una pregunta.",
+      "«Never have I seen such a thing.» «Not only did he call, but he also wrote.» Es propio del registro formal."],
+ qs:[
+  ["Never ___ such a beautiful city.",["have I seen","I have seen","I saw","did I saw"],"Tras Never al inicio: auxiliar + sujeto (have I seen)."],
+  ["Not only ___ late, but he also forgot the report.",["did he arrive","he arrived","arrived he","he did arrive"],"Con past simple se añade el auxiliar did antes del sujeto."],
+  ["Hardly ___ when the phone rang.",["had I sat down","I had sat down","I sat down","did I sat down"],"Hardly… when lleva past perfect con inversión."],
+  ["Under no circumstances ___ leave the room during the exam.",["should you","you should","you must","you can"],"El modal va antes del sujeto: should you."],
+  ["Rarely ___ so much effort into a project.",["has she put","she has put","she puts","she did put"],"Rarely al inicio obliga a invertir: has she put."]
+ ]},
+{id:"cleft", level:"C1", title:"Frases enfáticas",
+ exp:["Para destacar una parte de la frase: <i>It is / was … that / who …</i> «It was Maria who called.»",
+      "O con <i>What … is / was …</i> «What I need is more time.»"],
+ qs:[
+  ["___ I need is a good night's sleep.",["What","That","Which","It"],"What I need is… equivale a «lo que necesito es…»."],
+  ["It was in Lisbon ___ I met my best friend.",["that","what","who","whom"],"It was + lo destacado + that."],
+  ["It was my sister ___ told me the news.",["who","what","which","whose"],"Si lo destacado es una persona: who."],
+  ["What surprised me ___ the price.",["was","were","it was","that was"],"What surprised me funciona como sujeto singular: was."],
+  ["___ was the noise that woke me up.",["It","What","Which","Who"],"La estructura es It was … that …"]
+ ]},
+{id:"wish", level:"C1", title:"Wish, if only y condicionales mixtos",
+ exp:["<i>wish + past simple</i>: deseo sobre el presente. «I wish I had more time.»",
+      "<i>wish + past perfect</i>: arrepentimiento del pasado. «I wish I had studied.»",
+      "<i>wish + would</i>: queja sobre lo que hace otra persona. «I wish you would listen.»",
+      "<i>Condicional mixto</i>: causa en el pasado, resultado ahora. «If I had taken that job, I would be living in London now.»"],
+ qs:[
+  ["I wish I ___ more free time these days.",["had","have","would have","had had"],"Deseo sobre el presente: wish + past simple."],
+  ["I wish I ___ harder for last week's exam.",["had studied","studied","would study","have studied"],"Arrepentimiento del pasado: wish + past perfect."],
+  ["I wish you ___ interrupting me.",["would stop","stop","will stop","had stop"],"Queja sobre lo que hace otra persona: wish + would."],
+  ["If only I ___ speak English fluently now.",["could","can","would","will"],"If only funciona como wish: con el presente se usa el pasado (could)."],
+  ["If I had taken that job, I ___ in London now.",["would be living","would have lived","will be living","had lived"],"Causa pasada con resultado presente (now): would + verbo."]
+ ]}
+];
+
+const PHRASES = {
+B1:[
+ ["I have lived in Portugal for two years.","Vivo en Portugal desde hace dos años."],
+ ["Could you tell me where the library is?","¿Podrías decirme dónde está la biblioteca?"],
+ ["I'm looking forward to meeting my new classmates.","Tengo ganas de conocer a mis nuevos compañeros de clase."],
+ ["If it rains tomorrow, we will stay at home.","Si llueve mañana, nos quedaremos en casa."],
+ ["She told me that the lecture had been cancelled.","Me dijo que la clase se había cancelado."],
+ ["I usually take notes during class.","Normalmente tomo apuntes durante la clase."],
+ ["How long have you been learning English?","¿Cuánto tiempo llevas aprendiendo inglés?"],
+ ["The deadline for the application is next Friday.","La fecha límite de la solicitud es el próximo viernes."]],
+B2:[
+ ["Despite the bad weather, the event was a success.","A pesar del mal tiempo, el evento fue un éxito."],
+ ["If I had known about the test, I would have studied more.","Si hubiera sabido lo del examen, habría estudiado más."],
+ ["The results of the survey were published last month.","Los resultados de la encuesta se publicaron el mes pasado."],
+ ["She suggested working together on the assignment.","Sugirió que hiciéramos juntos el trabajo."],
+ ["He must have forgotten about the meeting.","Seguro que se ha olvidado de la reunión."],
+ ["Many students struggle to keep up with the reading.","A muchos estudiantes les cuesta seguir el ritmo de las lecturas."],
+ ["The course requires a good level of written English.","El curso exige un buen nivel de inglés escrito."],
+ ["I would rather study in the morning than at night.","Prefiero estudiar por la mañana que por la noche."]],
+C1:[
+ ["Never have I seen such a thorough piece of research.","Nunca había visto una investigación tan minuciosa."],
+ ["What surprised me most was how quickly she adapted.","Lo que más me sorprendió fue lo rápido que se adaptó."],
+ ["The findings, albeit limited, raise some interesting questions.","Los resultados, aunque limitados, plantean algunas preguntas interesantes."],
+ ["Had I known about the deadline, I would have applied earlier.","Si hubiera sabido lo de la fecha límite, habría enviado la solicitud antes."],
+ ["Not only did he finish the essay, but he also revised it twice.","No solo terminó el ensayo, sino que además lo revisó dos veces."],
+ ["There is widespread concern about the rising cost of housing.","Existe una preocupación generalizada por el aumento del coste de la vivienda."],
+ ["It is too early to draw any firm conclusions from the data.","Es demasiado pronto para sacar conclusiones firmes de los datos."],
+ ["The proposal was rejected on the grounds that it was too expensive.","La propuesta fue rechazada con el argumento de que era demasiado cara."]]
+};
+
+// [task in English, minimum words]
+const WRITING = {
+B1:[["Describe your typical day in Portugal.",80],["Write about your last weekend. What did you do?",80],["Why do you want to study at university?",100],["Describe your city to a new student.",100]],
+B2:[["Some people think online classes are better than face-to-face classes. Do you agree?",150],["Write an email to a university asking about the admission requirements.",150],["Describe a challenge you have faced and how you overcame it.",150],["What are the advantages and disadvantages of living abroad?",180]],
+C1:[["'Universities should teach practical skills rather than theory.' Discuss.",220],["To what extent has technology changed the way we learn languages?",220],["Write a personal statement explaining why you are a strong candidate for your degree.",250],["Summarise an article or video you saw this week and give your opinion.",220]]
+};
+
+/* ---------- State ---------- */
+const LEVELS = ["B1","B2","C1"];
+const INTERVALS = [0,1,3,7,16,35];   // days until the next review, by box
+const NEW_PER_DAY = 10;
+const TARGET = new Date(2027, 8, 1);
+const KEY = "camino-c1-v1";
+const blank = () => ({cards:{}, newDay:{day:0,n:0,extra:0}, grammar:{}, phrases:{}, drafts:{}, days:{}, prefs:{fl:"B1", fi:{B1:0,B2:0,C1:0}, wl:"B1", wi:{B1:0,B2:0,C1:0}, mode:""}});
+let S = blank();
+try { const raw = localStorage.getItem(KEY); if (raw) { const o = JSON.parse(raw); S = Object.assign(blank(), o); S.prefs = Object.assign(blank().prefs, o.prefs || {}); } } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const today = () => { const d = new Date(); return Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000); };
+const day = () => { const t = today(); return S.days[t] || (S.days[t] = {cards:0, grammar:0, phrases:0, write:0}); };
+const active = t => { const d = S.days[t]; return !!d && (d.cards || d.grammar || d.phrases || d.write) > 0; };
+function streak() { let t = today(), n = 0; if (!active(t)) t--; while (active(t)) { n++; t--; } return n; }
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+/* ---------- Speech ---------- */
+const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
+function speak(text, rate) {
+  if (!canSpeak) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/[\[\]]/g, ""));
+    const vs = speechSynthesis.getVoices();
+    const v = vs.find(x => /^en[-_]GB/i.test(x.lang)) || vs.find(x => /^en/i.test(x.lang));
+    if (v) { u.voice = v; u.lang = v.lang; } else u.lang = "en-GB";
+    u.rate = rate || 0.95;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* ---------- Vocabulary (spaced repetition) ---------- */
+let V = {queue:null, revealed:false, day:0};
+function newAllowance() {
+  const t = today();
+  if (S.newDay.day !== t) S.newDay = {day:t, n:0, extra:0};
+  return Math.max(0, NEW_PER_DAY + S.newDay.extra - S.newDay.n);
+}
+function cardCounts() {
+  const t = today();
+  const due = VOCAB.filter(c => S.cards[c[1]] && S.cards[c[1]].due <= t).length;
+  const unseen = VOCAB.filter(c => !S.cards[c[1]]).length;
+  return {due, fresh: Math.min(unseen, newAllowance()), unseen};
+}
+function buildQueue() {
+  const t = today();
+  const due = VOCAB.filter(c => S.cards[c[1]] && S.cards[c[1]].due <= t);
+  const fresh = VOCAB.filter(c => !S.cards[c[1]]).slice(0, newAllowance());
+  V = {queue: due.concat(fresh), revealed:false, day:t};
+}
+function rate(how) {
+  const c = V.queue.shift(); if (!c) return;
+  const t = today(), id = c[1];
+  let st = S.cards[id];
+  if (!st) { st = S.cards[id] = {box:0, due:t}; newAllowance(); S.newDay.n++; }
+  if (how === "yes") { st.box = Math.min(5, st.box + 1); st.due = t + INTERVALS[st.box]; }
+  else if (how === "almost") { st.box = Math.max(1, st.box); st.due = t + 1; }
+  else { st.box = 0; st.due = t; V.queue.push(c); }
+  day().cards++;
+  V.revealed = false;
+  save();
+}
+function levelPct(lv) {
+  const cards = VOCAB.filter(c => c[0] === lv);
+  const known = cards.filter(c => S.cards[c[1]] && S.cards[c[1]].box >= 3).length;
+  const topics = GRAMMAR.filter(g => g.level === lv);
+  const g = topics.reduce((n, x) => n + (S.grammar[x.id] || 0) / x.qs.length, 0);
+  return Math.round(100 * (0.6 * known / cards.length + 0.4 * g / topics.length));
+}
+function viewPalabras() {
+  if (!V.queue || V.day !== today()) buildQueue();
+  const c = V.queue[0];
+  const seen = Object.keys(S.cards).length;
+  const strong = VOCAB.filter(x => S.cards[x[1]] && S.cards[x[1]].box >= 3).length;
+  const head = `<div class="stack"><h1>Palabras</h1><p class="lead">Cada palabra vuelve justo antes de que la olvides: al día siguiente, a los 3 días, a la semana…</p></div>`;
+  const foot = `<p class="meta"><span>${seen} de ${VOCAB.length} vistas</span><span>${strong} bien aprendidas</span></p>`;
+  if (!c) {
+    const left = VOCAB.filter(x => !S.cards[x[1]]).length;
+    return head + `<div class="card"><h2>Has terminado las palabras de hoy</h2>
+      <p class="lead">Vuelve mañana para repasarlas. ${left ? "Si te quedan ganas, puedes adelantar algunas nuevas." : "Ya has visto todo el mazo."}</p>
+      ${left ? `<button class="btn ghost" data-act="more">Ver 5 palabras nuevas más</button>` : ""}</div>` + foot;
+  }
+  const isNew = !S.cards[c[1]];
+  const ex = esc(c[3]).replace(/\[/g, "<mark>").replace(/\]/g, "</mark>");
+  return head + `<div class="card">
+      <div class="meta"><span class="chip">${c[0]}</span><span>${isNew ? "Nueva" : "Repaso"}</span><span>Quedan ${V.queue.length}</span></div>
+      <div class="word">${esc(c[1])}</div>
+      <p class="ex">${ex}</p>
+      ${canSpeak ? `<div class="row"><button class="btn quiet small" data-act="say" data-text="${esc(c[1])}">Escuchar palabra</button><button class="btn quiet small" data-act="say" data-text="${esc(c[3])}">Escuchar frase</button></div>` : ""}
+      ${V.revealed ? `<div class="meaning">${esc(c[2])}</div>${c[4] ? `<p class="note">${esc(c[4])}</p>` : ""}` : ""}
+    </div>
+    ${V.revealed
+      ? `<div class="grid3"><button class="btn bad" data-act="rate" data-how="no">No la sabía</button><button class="btn quiet" data-act="rate" data-how="almost">Casi</button><button class="btn good" data-act="rate" data-how="yes">La sabía</button></div>`
+      : `<button class="btn" data-act="reveal">Ver significado</button>`}` + foot;
+}
+
+/* ---------- Grammar ---------- */
+let G = {topic:null};
+function startTopic(id) {
+  const t = GRAMMAR.find(x => x.id === id);
+  G = {topic:t, i:0, score:0, picked:null, opts:shuffle(t.qs[0][1]), done:false};
+}
+function viewGramatica() {
+  if (!G.topic) {
+    return `<div class="stack"><h1>Gramática</h1><p class="lead">Cada tema tiene una explicación corta y cinco preguntas. Con 4 aciertos el tema cuenta como superado.</p></div>` +
+      LEVELS.map(lv => `<div class="stack"><div class="label">Nivel ${lv}</div><div class="topics">` +
+        GRAMMAR.filter(g => g.level === lv).map(g => {
+          const b = S.grammar[g.id];
+          return `<button class="topic" data-act="topic" data-id="${g.id}"><span><b>${esc(g.title)}</b><small>${b == null ? "Sin empezar" : `Mejor resultado: ${b} de ${g.qs.length}`}</small></span><span class="check ${b >= 4 ? "done" : ""}"></span></button>`;
+        }).join("") + `</div></div>`).join("");
+  }
+  const t = G.topic;
+  const back = `<button class="btn quiet small" data-act="topics">Volver a los temas</button>`;
+  if (G.done) {
+    return `<div class="stack"><div class="row">${back}</div><h1>${G.score} de ${t.qs.length}</h1>
+      <p class="lead">${G.score >= 4 ? "Tema superado." : "Repasa la explicación y vuelve a intentarlo: necesitas 4 aciertos."}</p></div>
+      <div class="explain">${t.exp.map(p => `<p>${p}</p>`).join("")}</div>
+      <button class="btn" data-act="topic" data-id="${t.id}">Repetir el tema</button>`;
+  }
+  const q = t.qs[G.i];
+  return `<div class="stack"><div class="row">${back}</div><div class="meta"><span class="chip">${t.level}</span><span>Pregunta ${G.i + 1} de ${t.qs.length}</span></div><h2>${esc(t.title)}</h2></div>
+    ${G.i === 0 && G.picked == null ? `<div class="explain">${t.exp.map(p => `<p>${p}</p>`).join("")}</div>` : ""}
+    <p class="q">${esc(q[0])}</p>
+    <div class="opts">${G.opts.map(o => {
+      let cls = "";
+      if (G.picked != null) cls = o === q[1][0] ? "right" : (o === G.picked ? "wrong" : "");
+      return `<button class="opt ${cls}" data-act="pick" data-opt="${esc(o)}" ${G.picked != null ? "disabled" : ""}>${esc(o)}</button>`;
+    }).join("")}</div>
+    ${G.picked != null ? `<p class="why">${G.picked === q[1][0] ? "Correcto. " : "No es esa. "}${esc(q[2])}</p><button class="btn" data-act="nextq">${G.i + 1 < t.qs.length ? "Siguiente pregunta" : "Ver resultado"}</button>` : ""}`;
+}
+function pick(o) {
+  if (G.picked != null) return;
+  G.picked = o;
+  if (o === G.topic.qs[G.i][1][0]) G.score++;
+}
+function nextQ() {
+  const t = G.topic;
+  if (G.i + 1 < t.qs.length) { G.i++; G.picked = null; G.opts = shuffle(t.qs[G.i][1]); return; }
+  G.done = true;
+  S.grammar[t.id] = Math.max(S.grammar[t.id] || 0, G.score);
+  day().grammar++;
+  save();
+}
+
+/* ---------- Phrases: dictation and translation ---------- */
+let F = {input:"", result:null};
+const cleanWord = w => w.toLowerCase().replace(/[’‘`]/g, "'").replace(/[^a-z0-9']/g, "");
+function compare(target, answer) {
+  const orig = target.split(/\s+/), T = orig.map(cleanWord), A = answer.split(/\s+/).map(cleanWord).filter(Boolean);
+  const n = T.length, m = A.length;
+  const L = Array.from({length: n + 1}, () => new Array(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) L[i][j] = T[i] === A[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+  const ok = new Array(n).fill(false); let i = 0, j = 0, hits = 0;
+  while (i < n && j < m) { if (T[i] === A[j]) { ok[i] = true; hits++; i++; j++; } else if (L[i + 1][j] >= L[i][j + 1]) i++; else j++; }
+  return {orig, ok, pct: Math.round(100 * hits / Math.max(n, m, 1))};
+}
+function phraseMode() { return S.prefs.mode || (canSpeak ? "listen" : "translate"); }
+function viewFrases() {
+  const lv = S.prefs.fl, list = PHRASES[lv], i = S.prefs.fi[lv] % list.length, p = list[i], mode = phraseMode();
+  const r = F.result;
+  return `<div class="stack"><h1>Frases</h1><p class="lead">${mode === "listen" ? "Escucha la frase y escríbela tal como suena. Es el mejor entrenamiento para entender clases en inglés." : "Traduce la frase al inglés y compárala con la respuesta modelo."}</p></div>
+    <div class="row">
+      <div class="seg-ctl" role="group" aria-label="Nivel">${LEVELS.map(l => `<button data-act="flevel" data-lv="${l}" aria-pressed="${l === lv}">${l}</button>`).join("")}</div>
+      <div class="seg-ctl" role="group" aria-label="Modo">${canSpeak ? `<button data-act="fmode" data-mode="listen" aria-pressed="${mode === "listen"}">Escuchar</button>` : ""}<button data-act="fmode" data-mode="translate" aria-pressed="${mode === "translate"}">Traducir</button></div>
+    </div>
+    ${!canSpeak ? `<p class="note">Este navegador no tiene voz en inglés, así que el dictado no está disponible aquí.</p>` : ""}
+    <div class="card">
+      <div class="meta"><span class="chip">${lv}</span><span>Frase ${i + 1} de ${list.length}</span></div>
+      ${mode === "listen"
+        ? `<div class="row"><button class="btn" data-act="say" data-text="${esc(p[0])}">Escuchar</button><button class="btn ghost" data-act="say" data-rate="0.7" data-text="${esc(p[0])}">Más despacio</button></div>`
+        : `<p class="ex">${esc(p[1])}</p>`}
+      <input type="text" id="phrase-input" autocomplete="off" autocapitalize="sentences" spellcheck="false" placeholder="Escribe la frase en inglés" value="${esc(F.input)}" aria-label="Tu respuesta en inglés">
+      ${r ? `<div class="stack"><div class="label">${mode === "listen" ? "La frase era" : "Respuesta modelo"} · ${r.pct}% igual</div>
+          <p class="diff">${r.orig.map((w, k) => `<span class="${r.ok[k] ? "ok" : "miss"}">${esc(w)}</span>`).join(" ")}</p>
+          ${mode === "listen" ? `<p class="note">${esc(p[1])}</p>` : `<p class="note">Puede haber otras traducciones correctas. Fíjate en las palabras subrayadas.</p>`}</div>` : ""}
+    </div>
+    ${r ? `<button class="btn" data-act="fnext">Siguiente frase</button>` : `<button class="btn" data-act="fcheck">Comprobar</button>`}`;
+}
+function checkPhrase() {
+  const el = $("#phrase-input"); F.input = el ? el.value : "";
+  if (!F.input.trim()) return;
+  const lv = S.prefs.fl, list = PHRASES[lv], i = S.prefs.fi[lv] % list.length;
+  F.result = compare(list[i][0], F.input);
+  const k = lv + i; S.phrases[k] = Math.max(S.phrases[k] || 0, F.result.pct);
+  if (F.result.pct >= 60) day().phrases++;
+  save();
+}
+
+/* ---------- Writing ---------- */
+function wordCount(s) { const m = s.trim().match(/\S+/g); return m ? m.length : 0; }
+function viewEscribir() {
+  const lv = S.prefs.wl, list = WRITING[lv], i = S.prefs.wi[lv] % list.length, t = list[i];
+  const text = S.drafts[lv + i] || "", n = wordCount(text);
+  return `<div class="stack"><h1>Escribir</h1><p class="lead">Escribe sin traductor. Después copia el texto y pégalo en tu conversación con Claude para que te lo corrija y te explique los errores.</p></div>
+    <div class="row">
+      <div class="seg-ctl" role="group" aria-label="Nivel">${LEVELS.map(l => `<button data-act="wlevel" data-lv="${l}" aria-pressed="${l === lv}">${l}</button>`).join("")}</div>
+      <button class="btn quiet small" data-act="wnext">Otro tema</button>
+    </div>
+    <div class="stack">
+      <div class="meta"><span class="chip">${lv}</span><span>Tema ${i + 1} de ${list.length}</span></div>
+      <p class="prompt">${esc(t[0])}</p>
+      <textarea id="draft" spellcheck="false" placeholder="Write your answer here…" aria-label="Tu texto en inglés">${esc(text)}</textarea>
+      <div class="spread"><span class="count ${n >= t[1] ? "ok" : ""}" id="wcount">${n} de ${t[1]} palabras</span><span class="count" id="copied" aria-live="polite"></span></div>
+    </div>
+    <button class="btn" data-act="copy">Copiar para corregir</button>`;
+}
+function onDraft(el) {
+  const lv = S.prefs.wl, i = S.prefs.wi[lv] % WRITING[lv].length, min = WRITING[lv][i][1];
+  S.drafts[lv + i] = el.value;
+  const n = wordCount(el.value), c = $("#wcount");
+  if (c) { c.textContent = `${n} de ${min} palabras`; c.classList.toggle("ok", n >= min); }
+  if (n >= min) day().write = 1;
+  save();
+}
+function copyDraft() {
+  const lv = S.prefs.wl, i = S.prefs.wi[lv] % WRITING[lv].length, el = $("#draft"), out = $("#copied");
+  if (!el || !el.value.trim()) { if (out) out.textContent = "Escribe algo primero"; return; }
+  const msg = `Corrige este texto en inglés (nivel ${lv}). Explícame cada error en español y dame una versión mejorada.\n\nTask: ${WRITING[lv][i][0]}\n\n${el.value.trim()}`;
+  const fallback = () => { el.focus(); el.select(); if (out) out.textContent = "Texto seleccionado: cópialo a mano"; };
+  try { navigator.clipboard.writeText(msg).then(() => { if (out) out.textContent = "Copiado"; }, fallback); } catch (e) { fallback(); }
+}
+
+/* ---------- Today ---------- */
+function viewHoy() {
+  const d = S.days[today()] || {}, cc = cardCounts();
+  const left = Math.max(0, Math.ceil((TARGET - new Date()) / 86400000));
+  const cardsDone = (d.cards || 0) > 0 && cc.due + cc.fresh === 0;
+  const nextT = GRAMMAR.find(g => (S.grammar[g.id] || 0) < 4);
+  const task = (href, done, title, detail) => `<a class="task" href="#${href}"><span class="check ${done ? "done" : ""}"></span><span class="task-t">${title}<span class="task-d">${detail}</span></span><span class="task-go">${done ? "Hecho" : "Empezar"}</span></a>`;
+  const cardText = cardsDone ? "Terminadas por hoy" : [cc.due ? `${cc.due} para repasar` : "", cc.fresh ? `${cc.fresh} nuevas` : ""].filter(Boolean).join(" y ") || "Nada pendiente";
+  return `<div class="stack"><h1>Faltan ${left} días para septiembre de 2027</h1><p class="lead">Unos 20 minutos aquí cada día, más todo el inglés que puedas escuchar y leer fuera.</p></div>
+    <div class="stack"><div class="label">Plan de hoy</div><div class="tasks">
+      ${task("palabras", cardsDone, "Palabras", cardText)}
+      ${task("gramatica", (d.grammar || 0) > 0, "Gramática", nextT ? esc(nextT.title) + " · " + nextT.level : "Todos los temas superados")}
+      ${task("frases", (d.phrases || 0) >= 3, "Frases", `${Math.min(d.phrases || 0, 3)} de 3 frases`)}
+      ${task("escribir", !!d.write, "Escribir", "Un texto corto para corregir")}
+    </div></div>
+    <div class="stack"><div class="label">Tu avance por nivel</div>
+      <div class="track">${LEVELS.map(lv => { const p = levelPct(lv); return `<div class="seg"><div class="bar"><i style="width:${p}%"></i></div><div class="seg-t"><b>${lv}</b><span>${p}%</span></div></div>`; }).join("")}</div>
+      <p class="note">Sube cuando aprendes bien las palabras de cada nivel y superas sus temas de gramática. Es una guía de esta aplicación, no un examen oficial.</p>
+    </div>`;
+}
+
+/* ---------- Routing and events ---------- */
+const VIEWS = {hoy:viewHoy, palabras:viewPalabras, gramatica:viewGramatica, frases:viewFrases, escribir:viewEscribir};
+function route() { const h = location.hash.replace("#", ""); return VIEWS[h] ? h : "hoy"; }
+function render() {
+  const r = route();
+  $("#main").innerHTML = VIEWS[r]();
+  document.querySelectorAll("#tabs a").forEach(a => { if (a.getAttribute("href") === "#" + r) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+  const n = streak();
+  $("#streak").textContent = n ? `Racha: ${n} ${n === 1 ? "día" : "días"}` : "Empieza tu racha hoy";
+}
+window.addEventListener("hashchange", () => { F.result = null; F.input = ""; render(); window.scrollTo(0, 0); });
+$("#main").addEventListener("input", e => { if (e.target.id === "draft") onDraft(e.target); });
+$("#main").addEventListener("keydown", e => { if (e.target.id === "phrase-input" && e.key === "Enter") { if (F.result) nextPhrase(); else checkPhrase(); render(); } });
+function nextPhrase() { const lv = S.prefs.fl; S.prefs.fi[lv] = (S.prefs.fi[lv] + 1) % PHRASES[lv].length; F = {input:"", result:null}; save(); }
+$("#main").addEventListener("click", e => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const a = b.dataset.act;
+  if (a === "say") { speak(b.dataset.text, parseFloat(b.dataset.rate) || 0); return; }
+  if (a === "copy") { copyDraft(); return; }
+  if (a === "reveal") V.revealed = true;
+  else if (a === "rate") rate(b.dataset.how);
+  else if (a === "more") { newAllowance(); S.newDay.extra += 5; save(); buildQueue(); }
+  else if (a === "topic") startTopic(b.dataset.id);
+  else if (a === "topics") G = {topic:null};
+  else if (a === "pick") pick(b.dataset.opt);
+  else if (a === "nextq") nextQ();
+  else if (a === "flevel") { S.prefs.fl = b.dataset.lv; F = {input:"", result:null}; save(); }
+  else if (a === "fmode") { S.prefs.mode = b.dataset.mode; F = {input:"", result:null}; save(); }
+  else if (a === "fcheck") checkPhrase();
+  else if (a === "fnext") nextPhrase();
+  else if (a === "wlevel") { S.prefs.wl = b.dataset.lv; save(); }
+  else if (a === "wnext") { const lv = S.prefs.wl; S.prefs.wi[lv] = (S.prefs.wi[lv] + 1) % WRITING[lv].length; save(); }
+  render();
+});
+if (canSpeak) { try { speechSynthesis.getVoices(); } catch (e) {} }
+render();
+</script>
+</html>
