@@ -132,6 +132,17 @@ textarea { min-height: 220px; resize: vertical; line-height: 1.6; }
 .count { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 14px; }
 .count.ok { color: var(--good); font-weight: 700; }
 
+/* Writing feedback and level unlock */
+.errs { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.err { padding: 12px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.err-line { font-size: 17px; overflow-wrap: anywhere; }
+.del { color: var(--bad); text-decoration: line-through; }
+.ins { color: var(--good); font-weight: 700; }
+.corrected { white-space: pre-wrap; font-size: 17px; line-height: 1.6; overflow-wrap: anywhere; }
+.unlock { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 16px; border-radius: 14px; background: var(--mark); color: var(--on-mark); }
+.unlock .label { color: var(--on-mark); }
+.unlock .btn { background: var(--on-mark); border-color: var(--on-mark); color: var(--mark); }
+
 /* Tab bar */
 .tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--surface); border-top: 1px solid var(--line);
   padding-top: 6px; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
@@ -194,6 +205,56 @@ const VOCAB = [
 ["B1","take notes","tomar apuntes","I always [take notes] during class."],
 ["B1","grow up","crecer, criarse","I [grew up] in a small town."],
 ["B1","unless","a menos que","You won't improve [unless] you practise every day."],
+["B1","afford","poder permitirse","I can't [afford] to live alone in the city centre."],
+["B1","apply for","solicitar","I'm going to [apply for] a place at the university."],
+["B1","application","solicitud","Your [application] must include a CV."],
+["B1","degree","título, carrera universitaria","She has a [degree] in engineering."],
+["B1","career","carrera profesional","He wants a [career] in medicine.","Falso amigo: la «carrera» que estudias es degree."],
+["B1","fee","tasa, matrícula","The tuition [fees] are paid every term."],
+["B1","grade","nota, calificación","You need a good [grade] in maths."],
+["B1","subject","asignatura","My favourite [subject] is history."],
+["B1","term","trimestre, cuatrimestre","The autumn [term] starts in September."],
+["B1","timetable","horario","Check the [timetable] before you go to class."],
+["B1","flatmate","compañero de piso","My [flatmate] is from Italy."],
+["B1","neighbourhood","barrio","I live in a quiet [neighbourhood]."],
+["B1","bill","factura, cuenta","We share the electricity [bill]."],
+["B1","save","ahorrar; guardar","I'm trying to [save] money for the trip."],
+["B1","spend","gastar; pasar (tiempo)","I [spend] too much time on my phone."],
+["B1","waste","desperdiciar","Don't [waste] time translating every word."],
+["B1","remind","recordar (a alguien)","Can you [remind] me to call my mum?","remember: acordarte tú. remind: hacer que otra persona se acuerde."],
+["B1","remember","acordarse de","I can't [remember] where I left my keys."],
+["B1","forget","olvidar","Don't [forget] your passport."],
+["B1","explain","explicar","Could you [explain] this word to me?","explain something to someone. Nunca «explain me»."],
+["B1","agree","estar de acuerdo","I [agree] with you.","Nunca «I am agree»."],
+["B1","argue","discutir","My brothers [argue] about everything."],
+["B1","complain","quejarse","He always [complains] about the weather."],
+["B1","expect","esperar (prever)","I [expect] the exam will be difficult.","wait: esperar a alguien. hope: esperar con deseo. expect: prever que pasará."],
+["B1","hope","esperar (desear)","I [hope] you feel better soon."],
+["B1","wait for","esperar a","I'll [wait for] you outside."],
+["B1","get on with","llevarse bien con","I [get on] well [with] my classmates."],
+["B1","look for","buscar","I'm [looking for] a part-time job."],
+["B1","look after","cuidar de","She [looks after] her little brother."],
+["B1","turn up","aparecer, presentarse","Only five students [turned up] to the lecture."],
+["B1","set up","montar, crear","They [set up] a study group."],
+["B1","work out","resolver, averiguar","I can't [work out] the answer to this problem."],
+["B1","make up your mind","decidirse","I can't [make up my mind] about which course to choose."],
+["B1","make a mistake","cometer un error","Everyone [makes mistakes] when learning a language.","Se dice make a mistake, no «do a mistake»."],
+["B1","do homework","hacer los deberes","I [do my homework] after dinner.","Con homework se usa do, no make."],
+["B1","pay attention","prestar atención","[Pay attention] to the pronunciation."],
+["B1","bored","aburrido (persona)","I was [bored] during the film.","bored: tú te aburres. boring: la cosa es aburrida."],
+["B1","boring","aburrido (cosa)","The lecture was really [boring]."],
+["B1","worried","preocupado","I'm [worried] about the exam."],
+["B1","proud","orgulloso","My parents are [proud] of me."],
+["B1","confident","seguro de sí mismo","I feel more [confident] when I speak English now."],
+["B1","nervous","nervioso","I always get [nervous] before a presentation."],
+["B1","crowded","abarrotado","The metro is very [crowded] in the morning."],
+["B1","expensive","caro","Eating out in Lisbon can be [expensive]."],
+["B1","cheap","barato","The canteen food is [cheap] and good."],
+["B1","instead of","en lugar de","Walk [instead of] taking the bus.","Después va -ing."],
+["B1","as soon as","en cuanto","Call me [as soon as] you arrive.","Después va presente, no will."],
+["B1","so that","para que","I speak slowly [so that] everyone understands."],
+["B1","in case","por si acaso","Take an umbrella [in case] it rains."],
+["B1","even though","aunque, a pesar de que","[Even though] I was tired, I went to class."],
 
 ["B2","achieve","lograr, conseguir","She [achieved] her goal of studying abroad."],
 ["B2","assignment","trabajo (de clase)","We have to finish the [assignment] by Friday."],
@@ -301,6 +362,51 @@ const GRAMMAR = [
   ["My bike ___ last night.",["was stolen","has stolen","stole","is stealing"],"Last night es pasado terminado: was + participio."],
   ["The exam has already ___ .",["been marked","marked","be marked","being marked"],"Present perfect en pasiva: has been + participio."]
  ]},
+{id:"future", level:"B1", title:"Will, going to y presente continuo",
+ exp:["<i>going to</i>: planes ya decididos, o algo que se ve venir. «I'm going to study medicine.» «Look at those clouds! It's going to rain.»",
+      "<i>will</i>: decisiones en el momento, promesas y predicciones de opinión. «I'll help you.» «I think you'll pass.»",
+      "<i>Presente continuo</i>: citas y planes con día y hora. «I'm meeting Ana at six.»"],
+ qs:[
+  ["The phone is ringing. ___ answer it.",["I'll","I'm","I","I'd"],"Decisión tomada en ese momento: will."],
+  ["I've already decided. I ___ study engineering.",["am going to","will","would","am"],"Plan ya decidido: going to."],
+  ["Look at those clouds! It ___ rain.",["is going to","rains","would","is raining to"],"Lo ves venir por una señal clara: going to."],
+  ["I ___ my dentist at 10 tomorrow; I booked it last week.",["am seeing","see","would see","seeing"],"Cita fija con hora: presente continuo."],
+  ["Don't worry, I ___ tell anyone.",["won't","am not going","don't","am not"],"Promesa: will / won't."]
+ ]},
+{id:"usedto", level:"B1", title:"Used to y be used to",
+ exp:["<i>used to + verbo</i>: hábitos del pasado que ya no ocurren. «I used to play football.»",
+      "<i>be used to + -ing</i>: estar acostumbrado. «I'm used to living alone.»",
+      "<i>get used to + -ing</i>: acostumbrarse. «I'm getting used to the weather.»"],
+ qs:[
+  ["When I was a child, I ___ live in a small village.",["used to","am used to","was used to","use to"],"Hábito pasado que ya no ocurre: used to + verbo."],
+  ["I'm not ___ getting up so early.",["used to","use to","using to","used"],"Estar acostumbrado: be used to + -ing."],
+  ["It took me months to get used to ___ on the left.",["driving","drive","drove","be driving"],"Después de get used to va -ing."],
+  ["___ you use to have long hair?",["Did","Were","Do","Had"],"En preguntas: Did you use to…? (use, sin d)."],
+  ["She ___ like vegetables, but now she loves them.",["didn't use to","wasn't used to","didn't used to","not used to"],"Negativa: didn't use to + verbo."]
+ ]},
+{id:"obligation", level:"B1", title:"Must, have to y should",
+ exp:["<i>must / have to</i>: obligación. «You have to show your ID.»",
+      "<i>mustn't</i>: prohibición. «You mustn't smoke here.»",
+      "<i>don't have to</i>: no es necesario. «You don't have to come.» No significa lo mismo que mustn't.",
+      "<i>should</i>: consejo. «You should sleep more.»"],
+ qs:[
+  ["You ___ smoke inside the building. It's forbidden.",["mustn't","don't have to","shouldn't to","haven't to"],"Prohibición: mustn't."],
+  ["It's Sunday, so I ___ get up early.",["don't have to","mustn't","haven't","shouldn't to"],"No es necesario: don't have to."],
+  ["You look tired. You ___ go to bed earlier.",["should","must to","have","don't have to"],"Consejo: should + verbo."],
+  ["Yesterday I ___ work until ten.",["had to","must","musted","have to"],"Must no tiene pasado: se usa had to."],
+  ["Students ___ wear a uniform at this school; it's optional.",["don't have to","mustn't","can't","shouldn't"],"Optional significa que no es obligatorio: don't have to."]
+ ]},
+{id:"quantity", level:"B1", title:"Much, many, a few y a little",
+ exp:["Contables (se pueden contar: books, friends): <i>many, a few, few</i>.",
+      "Incontables (water, money, advice, information): <i>much, a little, little</i>.",
+      "<i>a lot of</i> sirve para los dos. <i>a few / a little</i>: algo. <i>few / little</i>: casi nada."],
+ qs:[
+  ["How ___ money do you need?",["much","many","few","a few"],"Money es incontable: much."],
+  ["How ___ students are in your class?",["many","much","little","a little"],"Students es contable: many."],
+  ["I have ___ friends in Lisbon, so I'm not alone.",["a few","a little","much","little"],"Friends es contable y aquí es positivo (algunos): a few."],
+  ["Can you give me ___ information about the course?",["some","many","a few","an"],"Information es incontable: some. Nunca many ni an."],
+  ["There's very ___ time left. Hurry up!",["little","few","many","a few"],"Time es incontable y aquí significa casi nada: little."]
+ ]},
 {id:"cond3", level:"B2", title:"Tercer condicional",
  exp:["Habla de un pasado que ya no se puede cambiar: <i>if + past perfect, would have + participio</i>.",
       "«If I had studied, I would have passed.» (No estudié y no aprobé.)"],
@@ -385,7 +491,15 @@ B1:[
  ["She told me that the lecture had been cancelled.","Me dijo que la clase se había cancelado."],
  ["I usually take notes during class.","Normalmente tomo apuntes durante la clase."],
  ["How long have you been learning English?","¿Cuánto tiempo llevas aprendiendo inglés?"],
- ["The deadline for the application is next Friday.","La fecha límite de la solicitud es el próximo viernes."]],
+ ["The deadline for the application is next Friday.","La fecha límite de la solicitud es el próximo viernes."],
+ ["My flatmate and I share the bills.","Mi compañero de piso y yo compartimos las facturas."],
+ ["I used to live in a small town, but now I live in Lisbon.","Antes vivía en un pueblo pequeño, pero ahora vivo en Lisboa."],
+ ["You don't have to bring anything to the party.","No tienes que traer nada a la fiesta."],
+ ["I'm going to apply for a place at the university.","Voy a solicitar una plaza en la universidad."],
+ ["Call me as soon as you arrive.","Llámame en cuanto llegues."],
+ ["I'm not used to speaking English all day.","No estoy acostumbrado a hablar inglés todo el día."],
+ ["Even though it was raining, we went to the beach.","Aunque estaba lloviendo, fuimos a la playa."],
+ ["Could you explain this word to me, please?","¿Me podrías explicar esta palabra, por favor?"]],
 B2:[
  ["Despite the bad weather, the event was a success.","A pesar del mal tiempo, el evento fue un éxito."],
  ["If I had known about the test, I would have studied more.","Si hubiera sabido lo del examen, habría estudiado más."],
@@ -408,7 +522,7 @@ C1:[
 
 // [task in English, minimum words]
 const WRITING = {
-B1:[["Describe your typical day in Portugal.",80],["Write about your last weekend. What did you do?",80],["Why do you want to study at university?",100],["Describe your city to a new student.",100]],
+B1:[["Describe your typical day in Portugal.",80],["Write about your last weekend. What did you do?",80],["Why do you want to study at university?",100],["Describe your city to a new student.",100],["Write an email to a friend inviting them to visit you in Portugal.",80],["Describe a person who is important to you.",100],["What did you use to do as a child that you don't do now?",100],["Tell a story about a problem you had and how you solved it.",120]],
 B2:[["Some people think online classes are better than face-to-face classes. Do you agree?",150],["Write an email to a university asking about the admission requirements.",150],["Describe a challenge you have faced and how you overcame it.",150],["What are the advantages and disadvantages of living abroad?",180]],
 C1:[["'Universities should teach practical skills rather than theory.' Discuss.",220],["To what extent has technology changed the way we learn languages?",220],["Write a personal statement explaining why you are a strong candidate for your degree.",250],["Summarise an article or video you saw this week and give your opinion.",220]]
 };
@@ -419,10 +533,25 @@ const INTERVALS = [0,1,3,7,16,35];   // days until the next review, by box
 const NEW_PER_DAY = 10;
 const TARGET = new Date(2027, 8, 1);
 const KEY = "camino-c1-v1";
-const blank = () => ({cards:{}, newDay:{day:0,n:0,extra:0}, grammar:{}, phrases:{}, drafts:{}, days:{}, prefs:{fl:"B1", fi:{B1:0,B2:0,C1:0}, wl:"B1", wi:{B1:0,B2:0,C1:0}, mode:""}});
+const UNLOCK = 80;   // % of the current level needed to open the next one
+const blank = () => ({lvl:0, celebrate:"", fb:{}, cards:{}, newDay:{day:0,n:0,extra:0}, grammar:{}, phrases:{}, drafts:{}, days:{}, prefs:{fl:"B1", fi:{B1:0,B2:0,C1:0}, wl:"B1", wi:{B1:0,B2:0,C1:0}, mode:""}});
 let S = blank();
 try { const raw = localStorage.getItem(KEY); if (raw) { const o = JSON.parse(raw); S = Object.assign(blank(), o); S.prefs = Object.assign(blank().prefs, o.prefs || {}); } } catch (e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const isOpen = lv => LEVELS.indexOf(lv) <= S.lvl;
+const openLevels = () => LEVELS.slice(0, S.lvl + 1);
+function checkUnlock() {
+  while (S.lvl < LEVELS.length - 1 && levelPct(LEVELS[S.lvl]) >= UNLOCK) {
+    S.lvl++;
+    const nl = LEVELS[S.lvl];
+    S.prefs.fl = nl; S.prefs.wl = nl; S.celebrate = nl; V.queue = null;
+    save();
+  }
+  if (!isOpen(S.prefs.fl)) S.prefs.fl = LEVELS[S.lvl];
+  if (!isOpen(S.prefs.wl)) S.prefs.wl = LEVELS[S.lvl];
+}
+const levelPicker = (act, cur) => openLevels().length < 2 ? "" :
+  `<div class="seg-ctl" role="group" aria-label="Nivel">${openLevels().map(l => `<button data-act="${act}" data-lv="${l}" aria-pressed="${l === cur}">${l}</button>`).join("")}</div>`;
 const today = () => { const d = new Date(); return Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000); };
 const day = () => { const t = today(); return S.days[t] || (S.days[t] = {cards:0, grammar:0, phrases:0, write:0}); };
 const active = t => { const d = S.days[t]; return !!d && (d.cards || d.grammar || d.phrases || d.write) > 0; };
@@ -454,16 +583,17 @@ function newAllowance() {
   if (S.newDay.day !== t) S.newDay = {day:t, n:0, extra:0};
   return Math.max(0, NEW_PER_DAY + S.newDay.extra - S.newDay.n);
 }
+const deck = () => VOCAB.filter(c => isOpen(c[0]));
 function cardCounts() {
   const t = today();
-  const due = VOCAB.filter(c => S.cards[c[1]] && S.cards[c[1]].due <= t).length;
-  const unseen = VOCAB.filter(c => !S.cards[c[1]]).length;
+  const due = deck().filter(c => S.cards[c[1]] && S.cards[c[1]].due <= t).length;
+  const unseen = deck().filter(c => !S.cards[c[1]]).length;
   return {due, fresh: Math.min(unseen, newAllowance()), unseen};
 }
 function buildQueue() {
   const t = today();
-  const due = VOCAB.filter(c => S.cards[c[1]] && S.cards[c[1]].due <= t);
-  const fresh = VOCAB.filter(c => !S.cards[c[1]]).slice(0, newAllowance());
+  const due = deck().filter(c => S.cards[c[1]] && S.cards[c[1]].due <= t);
+  const fresh = deck().filter(c => !S.cards[c[1]]).slice(0, newAllowance());
   V = {queue: due.concat(fresh), revealed:false, day:t};
 }
 function rate(how) {
@@ -488,14 +618,15 @@ function levelPct(lv) {
 function viewPalabras() {
   if (!V.queue || V.day !== today()) buildQueue();
   const c = V.queue[0];
-  const seen = Object.keys(S.cards).length;
-  const strong = VOCAB.filter(x => S.cards[x[1]] && S.cards[x[1]].box >= 3).length;
+  const D = deck();
+  const seen = D.filter(x => S.cards[x[1]]).length;
+  const strong = D.filter(x => S.cards[x[1]] && S.cards[x[1]].box >= 3).length;
   const head = `<div class="stack"><h1>Palabras</h1><p class="lead">Cada palabra vuelve justo antes de que la olvides: al día siguiente, a los 3 días, a la semana…</p></div>`;
-  const foot = `<p class="meta"><span>${seen} de ${VOCAB.length} vistas</span><span>${strong} bien aprendidas</span></p>`;
+  const foot = `<p class="meta"><span>${seen} de ${D.length} vistas</span><span>${strong} bien aprendidas</span></p>`;
   if (!c) {
-    const left = VOCAB.filter(x => !S.cards[x[1]]).length;
+    const left = D.filter(x => !S.cards[x[1]]).length;
     return head + `<div class="card"><h2>Has terminado las palabras de hoy</h2>
-      <p class="lead">Vuelve mañana para repasarlas. ${left ? "Si te quedan ganas, puedes adelantar algunas nuevas." : "Ya has visto todo el mazo."}</p>
+      <p class="lead">Vuelve mañana para repasarlas. ${left ? "Si te quedan ganas, puedes adelantar algunas nuevas." : "Ya has visto todas las palabras de tu nivel. Sigue repasándolas para desbloquear el siguiente."}</p>
       ${left ? `<button class="btn ghost" data-act="more">Ver 5 palabras nuevas más</button>` : ""}</div>` + foot;
   }
   const isNew = !S.cards[c[1]];
@@ -521,7 +652,7 @@ function startTopic(id) {
 function viewGramatica() {
   if (!G.topic) {
     return `<div class="stack"><h1>Gramática</h1><p class="lead">Cada tema tiene una explicación corta y cinco preguntas. Con 4 aciertos el tema cuenta como superado.</p></div>` +
-      LEVELS.map(lv => `<div class="stack"><div class="label">Nivel ${lv}</div><div class="topics">` +
+      openLevels().slice().reverse().map(lv => `<div class="stack"><div class="label">Nivel ${lv}</div><div class="topics">` +
         GRAMMAR.filter(g => g.level === lv).map(g => {
           const b = S.grammar[g.id];
           return `<button class="topic" data-act="topic" data-id="${g.id}"><span><b>${esc(g.title)}</b><small>${b == null ? "Sin empezar" : `Mejor resultado: ${b} de ${g.qs.length}`}</small></span><span class="check ${b >= 4 ? "done" : ""}"></span></button>`;
@@ -578,7 +709,7 @@ function viewFrases() {
   const r = F.result;
   return `<div class="stack"><h1>Frases</h1><p class="lead">${mode === "listen" ? "Escucha la frase y escríbela tal como suena. Es el mejor entrenamiento para entender clases en inglés." : "Traduce la frase al inglés y compárala con la respuesta modelo."}</p></div>
     <div class="row">
-      <div class="seg-ctl" role="group" aria-label="Nivel">${LEVELS.map(l => `<button data-act="flevel" data-lv="${l}" aria-pressed="${l === lv}">${l}</button>`).join("")}</div>
+      ${levelPicker("flevel", lv)}
       <div class="seg-ctl" role="group" aria-label="Modo">${canSpeak ? `<button data-act="fmode" data-mode="listen" aria-pressed="${mode === "listen"}">Escuchar</button>` : ""}<button data-act="fmode" data-mode="translate" aria-pressed="${mode === "translate"}">Traducir</button></div>
     </div>
     ${!canSpeak ? `<p class="note">Este navegador no tiene voz en inglés, así que el dictado no está disponible aquí.</p>` : ""}
@@ -606,21 +737,96 @@ function checkPhrase() {
 
 /* ---------- Writing ---------- */
 function wordCount(s) { const m = s.trim().match(/\S+/g); return m ? m.length : 0; }
+/* Correction runs through Claude when the page is opened inside Claude (the `sample` capability).
+   Anywhere else (for example GitHub Pages) it is unavailable and the copy button is the fallback. */
+let SAMPLE;   // undefined: still loading, null: unavailable
+const sampleReady = (window.claude && typeof window.claude.use === "function")
+  ? window.claude.use("sample").then(s => s, () => null) : Promise.resolve(null);
+sampleReady.then(s => { SAMPLE = s; if (route() === "escribir" && !W.busy) render(); });
+let W = {busy:false, msg:"", ctl:null};
+const wKey = () => { const lv = S.prefs.wl; return lv + (S.prefs.wi[lv] % WRITING[lv].length); };
+
+function viewFeedback(f, draft) {
+  const r = f.result, errs = Array.isArray(r.errors) ? r.errors : [];
+  return `<div class="card fb" id="feedback">
+    <div class="spread"><h2>Corrección</h2>${r.level ? `<span class="chip">Nivel del texto: ${esc(r.level)}</span>` : ""}</div>
+    ${f.text.trim() !== draft.trim() ? `<p class="note">Has cambiado el texto desde esta corrección.</p>` : ""}
+    ${r.good ? `<p>${esc(r.good)}</p>` : ""}
+    ${errs.length ? `<div class="stack"><div class="label">${errs.length} ${errs.length === 1 ? "error" : "errores"}</div><div class="errs">${errs.map(e => `
+      <div class="err"><p class="err-line"><span class="del">${esc(e.original || "")}</span> <span aria-hidden="true">→</span> <span class="ins">${esc(e.fix || "")}</span></p>${e.why ? `<p class="note">${esc(e.why)}</p>` : ""}</div>`).join("")}</div></div>`
+      : `<p class="note">No he encontrado errores.</p>`}
+    ${r.corrected ? `<div class="stack"><div class="label">Texto corregido</div><p class="corrected">${esc(r.corrected)}</p></div>` : ""}
+    ${r.tip ? `<div class="explain"><p><i>Para subir de nivel:</i> ${esc(r.tip)}</p></div>` : ""}
+  </div>`;
+}
 function viewEscribir() {
   const lv = S.prefs.wl, list = WRITING[lv], i = S.prefs.wi[lv] % list.length, t = list[i];
-  const text = S.drafts[lv + i] || "", n = wordCount(text);
-  return `<div class="stack"><h1>Escribir</h1><p class="lead">Escribe sin traductor. Después copia el texto y pégalo en tu conversación con Claude para que te lo corrija y te explique los errores.</p></div>
+  const text = S.drafts[lv + i] || "", n = wordCount(text), f = S.fb[lv + i];
+  const auto = SAMPLE !== null;
+  return `<div class="stack"><h1>Escribir</h1><p class="lead">${auto
+      ? "Escribe sin traductor y pulsa «Corregir mi texto». Te marco cada error y te explico en español por qué está mal."
+      : "Escribe sin traductor. Aquí no se puede corregir automáticamente: copia el texto y pégalo en tu conversación con Claude."}</p></div>
     <div class="row">
-      <div class="seg-ctl" role="group" aria-label="Nivel">${LEVELS.map(l => `<button data-act="wlevel" data-lv="${l}" aria-pressed="${l === lv}">${l}</button>`).join("")}</div>
-      <button class="btn quiet small" data-act="wnext">Otro tema</button>
+      ${levelPicker("wlevel", lv)}
+      <button class="btn quiet small" data-act="wnext" ${W.busy ? "disabled" : ""}>Otro tema</button>
     </div>
     <div class="stack">
       <div class="meta"><span class="chip">${lv}</span><span>Tema ${i + 1} de ${list.length}</span></div>
       <p class="prompt">${esc(t[0])}</p>
-      <textarea id="draft" spellcheck="false" placeholder="Write your answer here…" aria-label="Tu texto en inglés">${esc(text)}</textarea>
+      <textarea id="draft" spellcheck="false" placeholder="Write your answer here…" aria-label="Tu texto en inglés" ${W.busy ? "readonly" : ""}>${esc(text)}</textarea>
       <div class="spread"><span class="count ${n >= t[1] ? "ok" : ""}" id="wcount">${n} de ${t[1]} palabras</span><span class="count" id="copied" aria-live="polite"></span></div>
     </div>
-    <button class="btn" data-act="copy">Copiar para corregir</button>`;
+    ${auto ? (W.busy
+        ? `<div class="row"><button class="btn" disabled>Corrigiendo… puede tardar un minuto</button><button class="btn quiet" data-act="wstop">Parar</button></div>`
+        : `<button class="btn" data-act="correct">${f ? "Corregir de nuevo" : "Corregir mi texto"}</button>`) : ""}
+    ${W.msg ? `<p class="why" role="status">${esc(W.msg)}</p>` : ""}
+    ${f && !W.busy ? viewFeedback(f, text) : ""}
+    <button class="btn ${auto ? "ghost" : ""}" data-act="copy">Copiar para pegar en el chat</button>`;
+}
+async function correctDraft() {
+  const el = $("#draft"); if (el) onDraft(el);
+  const lv = S.prefs.wl, k = wKey(), text = (S.drafts[k] || "").trim();
+  if (wordCount(text) < 5) { W.msg = "Escribe al menos unas frases antes de corregir."; return render(); }
+  const s = await sampleReady;
+  if (!s) { SAMPLE = null; W.msg = "La corrección automática solo funciona al abrir la aplicación dentro de Claude. Usa «Copiar para pegar en el chat»."; return render(); }
+  const task = WRITING[lv][S.prefs.wi[lv] % WRITING[lv].length][0];
+  const prompt = `Eres profesor de inglés. Tu alumno es hispanohablante, tiene nivel ${lv}, vive en Portugal y se prepara para estudiar en una universidad en inglés. Corrige su texto.
+
+Tarea que tenía que responder: "${task}"
+
+Texto del alumno:
+"""
+${text}
+"""
+
+Responde solo con un objeto JSON con esta forma:
+{"level": "nivel MCER que demuestra el texto: A2, B1, B2 o C1",
+ "good": "una frase en español sobre lo que ha hecho bien",
+ "errors": [{"original": "fragmento exacto del texto con el error", "fix": "el fragmento corregido", "why": "explicación breve en español de la regla"}],
+ "corrected": "el texto completo corregido, cambiando lo mínimo para que sea correcto y natural",
+ "tip": "un consejo concreto en español para subir de nivel, con un ejemplo en inglés"}
+Incluye como máximo 12 errores, los más importantes primero: gramática, vocabulario y expresiones poco naturales. Si el texto no está en inglés o no responde a la tarea, dilo en "good" y deja "errors" vacío.`;
+  W = {busy:true, msg:"", ctl:new AbortController()};
+  render();
+  try {
+    const r = await s.json(prompt, {signal: W.ctl.signal, cache: false});
+    if (!r || typeof r !== "object") throw {code:"invalid_json"};
+    S.fb[k] = {text, result: {level: String(r.level || ""), good: String(r.good || ""), corrected: String(r.corrected || ""), tip: String(r.tip || ""),
+      errors: (Array.isArray(r.errors) ? r.errors : []).map(e => ({original: String(e && e.original || ""), fix: String(e && e.fix || ""), why: String(e && e.why || "")}))}};
+    day().write = 1;
+    save();
+    W = {busy:false, msg:"", ctl:null};
+  } catch (e) {
+    const code = e && e.code;
+    let msg = "La corrección ha fallado. Vuelve a intentarlo.";
+    if (code === "cancelled") msg = "";
+    else if (code === "rate_limited") msg = "Has pedido muchas correcciones seguidas. Espera un poco y vuelve a intentarlo.";
+    else if (code === "session_expired") msg = "Tu sesión de Claude ha caducado. Vuelve a iniciar sesión y prueba otra vez.";
+    else if (["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"].includes(code)) { SAMPLE = null; msg = "La corrección automática no está permitida aquí. Usa «Copiar para pegar en el chat»."; }
+    W = {busy:false, msg, ctl:null};
+  }
+  render();
+  const fbEl = $("#feedback"); if (fbEl) fbEl.scrollIntoView({behavior: "smooth", block: "start"});
 }
 function onDraft(el) {
   const lv = S.prefs.wl, i = S.prefs.wi[lv] % WRITING[lv].length, min = WRITING[lv][i][1];
@@ -643,19 +849,21 @@ function viewHoy() {
   const d = S.days[today()] || {}, cc = cardCounts();
   const left = Math.max(0, Math.ceil((TARGET - new Date()) / 86400000));
   const cardsDone = (d.cards || 0) > 0 && cc.due + cc.fresh === 0;
-  const nextT = GRAMMAR.find(g => (S.grammar[g.id] || 0) < 4);
+  const nextT = GRAMMAR.find(g => isOpen(g.level) && (S.grammar[g.id] || 0) < 4);
+  const cur = LEVELS[S.lvl], pct = levelPct(cur), last = S.lvl === LEVELS.length - 1;
   const task = (href, done, title, detail) => `<a class="task" href="#${href}"><span class="check ${done ? "done" : ""}"></span><span class="task-t">${title}<span class="task-d">${detail}</span></span><span class="task-go">${done ? "Hecho" : "Empezar"}</span></a>`;
   const cardText = cardsDone ? "Terminadas por hoy" : [cc.due ? `${cc.due} para repasar` : "", cc.fresh ? `${cc.fresh} nuevas` : ""].filter(Boolean).join(" y ") || "Nada pendiente";
-  return `<div class="stack"><h1>Faltan ${left} días para septiembre de 2027</h1><p class="lead">Unos 20 minutos aquí cada día, más todo el inglés que puedas escuchar y leer fuera.</p></div>
+  return `${S.celebrate ? `<div class="unlock" role="status"><div class="stack"><div class="label">Nuevo nivel</div><h2>Has desbloqueado el ${esc(S.celebrate)}</h2><p>Tienes palabras, gramática, frases y temas de escritura nuevos.</p></div><button class="btn small" data-act="celebrated">Empezar</button></div>` : ""}
+    <div class="stack"><h1>Faltan ${left} días para septiembre de 2027</h1><p class="lead">Unos 20 minutos aquí cada día, más todo el inglés que puedas escuchar y leer fuera.</p></div>
     <div class="stack"><div class="label">Plan de hoy</div><div class="tasks">
       ${task("palabras", cardsDone, "Palabras", cardText)}
       ${task("gramatica", (d.grammar || 0) > 0, "Gramática", nextT ? esc(nextT.title) + " · " + nextT.level : "Todos los temas superados")}
       ${task("frases", (d.phrases || 0) >= 3, "Frases", `${Math.min(d.phrases || 0, 3)} de 3 frases`)}
       ${task("escribir", !!d.write, "Escribir", "Un texto corto para corregir")}
     </div></div>
-    <div class="stack"><div class="label">Tu avance por nivel</div>
-      <div class="track">${LEVELS.map(lv => { const p = levelPct(lv); return `<div class="seg"><div class="bar"><i style="width:${p}%"></i></div><div class="seg-t"><b>${lv}</b><span>${p}%</span></div></div>`; }).join("")}</div>
-      <p class="note">Sube cuando aprendes bien las palabras de cada nivel y superas sus temas de gramática. Es una guía de esta aplicación, no un examen oficial.</p>
+    <div class="stack"><div class="label">Tu nivel</div>
+      <div class="seg"><div class="seg-t"><b>${cur}</b><span>${pct}%${last ? "" : ` de ${UNLOCK}%`}</span></div><div class="bar"><i style="width:${last ? pct : Math.min(100, Math.round(100 * pct / UNLOCK))}%"></i></div></div>
+      <p class="note">${last ? "Es el último nivel de la aplicación." : `Al llegar al ${UNLOCK}% se desbloquea el siguiente nivel.`} Subes cuando aciertas una palabra en 3 repasos seguidos y cuando superas temas de gramática. Es una guía de la aplicación, no un examen oficial.</p>
     </div>`;
 }
 
@@ -663,6 +871,7 @@ function viewHoy() {
 const VIEWS = {hoy:viewHoy, palabras:viewPalabras, gramatica:viewGramatica, frases:viewFrases, escribir:viewEscribir};
 function route() { const h = location.hash.replace("#", ""); return VIEWS[h] ? h : "hoy"; }
 function render() {
+  checkUnlock();
   const r = route();
   $("#main").innerHTML = VIEWS[r]();
   document.querySelectorAll("#tabs a").forEach(a => { if (a.getAttribute("href") === "#" + r) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
@@ -678,6 +887,9 @@ $("#main").addEventListener("click", e => {
   const a = b.dataset.act;
   if (a === "say") { speak(b.dataset.text, parseFloat(b.dataset.rate) || 0); return; }
   if (a === "copy") { copyDraft(); return; }
+  if (a === "correct") { correctDraft(); return; }
+  if (a === "wstop") { if (W.ctl) W.ctl.abort(); return; }
+  if (a === "celebrated") { S.celebrate = ""; save(); render(); return; }
   if (a === "reveal") V.revealed = true;
   else if (a === "rate") rate(b.dataset.how);
   else if (a === "more") { newAllowance(); S.newDay.extra += 5; save(); buildQueue(); }
@@ -689,8 +901,8 @@ $("#main").addEventListener("click", e => {
   else if (a === "fmode") { S.prefs.mode = b.dataset.mode; F = {input:"", result:null}; save(); }
   else if (a === "fcheck") checkPhrase();
   else if (a === "fnext") nextPhrase();
-  else if (a === "wlevel") { S.prefs.wl = b.dataset.lv; save(); }
-  else if (a === "wnext") { const lv = S.prefs.wl; S.prefs.wi[lv] = (S.prefs.wi[lv] + 1) % WRITING[lv].length; save(); }
+  else if (a === "wlevel") { S.prefs.wl = b.dataset.lv; W.msg = ""; save(); }
+  else if (a === "wnext") { W.msg = ""; const lv = S.prefs.wl; S.prefs.wi[lv] = (S.prefs.wi[lv] + 1) % WRITING[lv].length; save(); }
   render();
 });
 if (canSpeak) { try { speechSynthesis.getVoices(); } catch (e) {} }
